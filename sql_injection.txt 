@@ -1,0 +1,175 @@
+sql statements
+
+	- ex. > SELECT name, description FROM products WHERE id=9; 
+
+	- queries database, asking for the name and the description of a record in the products table. in this example the selected record will have an id value equal to 9
+
+	- basic syntax of the SELECT statement 
+
+		- > SELECT <columns list> FROM <table> WHERE <condition>; 
+
+	- also possible to select constant values: 
+
+		- > SELECT 22, 'string', 0x12, 'another string';
+
+	- UNION command 
+		
+		- performs a union between two results
+
+		- > <SELECT statement> UNION <other SELECT statement>; 
+
+	- COMMENT a string 
+
+		- two strings you can use to comment a line in SQL: 
+			- #(the hash symbol)
+			- --(two dashes followed by a space)
+
+		- > SELECT field FROM table; # this is a comment 
+		- > SELECT field FROM table; -- this is another comment 
+
+	- SQL queries performed 
+
+		-SELECT example 
+
+		- > SELECT Name, Description FROM Products WHERE ID='1'; 
+		- > SELECT Name, Description FROM Products WHERE Name='Shoes';
+
+		-UNION example 
+
+		- > SELECT Name, Description FROM Products WHERE ID='3' UNION SELECT Username, Password FROM Accounts;
+
+		-result of the query is a table containing a row with the Hat item and all the usernames and passwords from Accounts: 
+
+		- > SELECT Name, Description FROM Products WHERE ID='3' UNION SELECT 'Example', 'Data'; 
+
+		- result is a query is a table containing a row with a hat item and the provided custom row (added a new name and description)
+
+
+	- sql queries inside web applications 
+
+		- perform the same tasks within the app: 
+			- CONNECT to the database
+			- SUBMIT the query to the database
+			- RETRIEVE the results 
+		- then application logic can use the results 
+
+
+		- connection to mySQL database 
+			- PHP ex. 
+				
+				// CONFIGURATION
+
+				$dbhostname='1.2.3.4'; 
+				$dbuser='username'; 
+				$dbpassword='password'; 
+				$dbname='database'; 
+
+				// CONNECTION 
+
+				$connection = mysqli_connect ($dbhostname, $dbuser, $dbpassword, $dbname); 
+				
+				// QUERY DEFINITION
+
+				$query = "SELECT Name, Description FROM Products WHERE ID='3' UNION SELECT Username, Password FROM Accounts;"; 
+
+				// SUBMIT 
+
+				$results = mysqli_query($connection, $query); 
+				
+				// USAGE 
+
+				display_results($results); 
+
+				- showed a STATIC QUERY
+				- the $connection is an object referencing the connection to the database 
+				- $query contains the query 
+				- mysqli_query () is a function which submits the query to the the database 
+				- finally, the custom display_results() function renders the data 
+
+
+			- most of the time queries are not static, they are DYNAMICALLY BUILT by using users' input
+				- Vulnerable dynamic query example
+
+					$id = $_GET['id']; 
+
+					$connection = mysqli_connect ($dhbostname, $dbuser, $dbpassword, $dbname);
+
+					$query = "SELECT Name, Description FROM Products WHERE ID='$id';";
+
+					$results = mysqli_query($connection, $query); 
+					display_results($results); 
+
+					- previous example shows code using "user supplied input to build a query" (id parameter of the GET request) -> code then submits to the query to the database 
+
+					- behavior dangerous -> attacker can manipulate query construction 
+
+
+			- Ex of dynamic query 
+
+				SELECT Name, Description FROM Products WHERE ID='$id'; 
+
+					- expects $id values like: 
+						- 1 -> ID = '1';
+						- Example -> ID = 'Example'
+						- Itid3 -> ID = 'Itid3'
+
+					- attacker creates $id value which can change the query 
+
+						SELECT Name, Description FROM Products WHERE ID='' OR 'a' ='a'; 
+
+						- tells the database to select the items by checking TWO CONDITIONS
+							- the ID must be empty (id='')
+							- OR an always true condition ('a'='a')
+						- while the first condition is not met SQL engine will consider the second condition of the OR. 
+						- a true condition will select all the items in the Products table. 
+
+
+				- attack can exploit the UNION command 
+
+					SELECT Name, Description FROM Products WHERE ID='' UNION SELECT Username, Password FROM Accounts WHERE 'a'='a'
+
+					- select the items with an EMPTY ID -> selecting an empty set  -> performing a UNION with all the entries in the ACCOUNTS table 
+
+
+
+		- FINDING SQL INJECTIONS 
+
+			- to exploit SQL injection 
+				1. find injection point 
+				2. craft payload 
+
+			- to identify an injection point: 
+				1. test every supplied user input
+					1a. in web app user inputs are: 
+						GET parameters 
+						POST parameters 
+						HTTP headers 
+							- User-Agent 
+							- Cookie
+							- Accept 
+							- ... 
+
+				- EVERY INPUT must be tested to conduct a professional pentest 
+
+			- test an input for sql means trying to inject
+				- string terminators: ' and "
+				- SQL commands: SELECT, UNION, and others 
+				- SQL comments: # or -- 
+
+				- check to see if the web app behaves oddly 
+				- manually exploit then use automatic tools 
+
+		- Boolean Based SQL Injections 
+
+			- boolean logic to force the query to include all entries 
+
+			- when crafting a boolean based SQLi paylod you want: 
+				- transform the query in a True/False condition, which reflects its state in the web application output 
+
+				- test with ' OR 'a'=`a / ' OR '1'=`1
+
+	
+
+
+
+

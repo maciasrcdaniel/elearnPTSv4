@@ -1,0 +1,59 @@
+ Directories and File Enumeration 
+
+	- users of search engines can not find resources that are not linked by a web page on the internet 
+	- even unlinked files and directories can be accessed by anyone knowing the URL 
+
+	- enumeration
+		-  helps find those "hidden" resources that contain: 
+			- New and untested features
+			- backup files
+			- testing information
+			- developer's notes 
+
+		- two ways to enumerate resources; 
+			- pure brute-force
+			- dictionary attacks 
+
+		- brute force enumeration 
+			- try every possible combination 
+			- inefficient 
+			- ex. need 287979 trials to find the string "home"
+
+		- dictionary based enumeration
+			- understand what common names people tend to give files and directories 
+			-list of common file names, directory names and file extensions
+				- ex. common backup file names: 
+					- .bak, .old, .txt & .xxx 
+
+	- Enumeration Web Resources with Dirbuster
+
+		- OWASP Dirbuster 
+			- java application that can perform web enumeration 
+
+			- target URL: the site you want to test with the:port 
+			- brute force vs dictionary 
+			- if dictionary
+
+
+	- Dirbuster Video 
+
+		- use GET or Automatically switch between HEAD and GET 
+		- select "Go Faster"
+		- list based dirbuster will try different names 
+		- direcotry to start with / 
+		- file extension = back,old
+		- recursive = scan directory over and over 
+
+	- Dirb Video 
+
+		- brute for app resources 
+		- pre installed 
+		- word list of potential resources 
+
+		- look for github word lists github 
+		- -u basic authentication
+		- -p proxy 
+		- -z delay setting in miliseconds 
+		- -x specify extensions 
+		- -o save the results to a file 
+		

@@ -1,0 +1,67 @@
+Ping Sweeping 
+	- ICMP packets sent to check if the host is live 
+	- fping command 
+		- improved version of standard ping 
+		- does ping sweeps 
+		- install on kali by default 
+			# fping -a -g IPRANGE 
+		- Surpress unreachable hosts 
+			# fping -a -g IPRANGE 2>/dev/null
+	- nmap command 
+		- store finding to a -iL list 
+		# nmap -sV -sC -iL test.list -O findings.txt 
+		- "p0f" tool also used for offline OS fingerprinting 
+
+	- Port scan origin
+		- TCP connect scan 
+			- if connection is closed scanner receives RST packet 
+			- if open and three-way handshake is complete then scanner abruptly sends and RST to close the connection 
+			- Sys admins can see alot of connections to specific machines so TCP SYN scans were invented 	
+
+	- TCP SYN Scan 
+		- Stealthy
+		- SYN scan the scanner does not perform the handshake
+		- Just sends the SYN scan 
+		- If the RST is quickly received marked port is closed 
+		- If scanner receives ACK packet then the port is marked open and scanner sends RST packet 
+
+	- Scan a list 
+		- -iL hosttoscan.txt 
+		- scans a list 
+
+	- Specific ports to scan 
+		- nmap -p 21,22,129 <target> or -p 100-1000 <target> 
+
+	- Server does not respond to pings 
+		- use the -Pn swtich 
+		- skips pings scan and acts as alive 
+
+Spotting a firewall 
+
+	- bigger network = firewall 
+	- pay attention to incomplete results 
+	- if TCP succeeded on well-known service -sV version should not have any trouble identifying 
+	- example of firewall
+		#80/tcp open http? syn-ack ttl 64 
+		- question mark on the http
+		#80/tcp open tcpwrapped 
+		- service type not recognized 
+		- tcpwrapped means TCP handshake was completed but host CLOSED the connections 
+	- --reason switch
+		- show explanation of why port is marked open or closed 
+
+Masscan
+
+	- large networks and scan thousands of IP's at once 
+	- faster than nmap, but less accurate 
+
+
+
+
+
+
+
+
+
+
+

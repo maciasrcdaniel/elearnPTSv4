@@ -1,0 +1,23 @@
+Public Site 
+-Crunch base 
+-whois 
+
+Government 
+-SAM
+-GSA elibrary 
+
+Basic Company Email Patterns 
+-Ex. dmacias@companya.com
+-Ex. daniel.macias@companya.com
+
+Subdomain enumeration
+	-look for old subdomains not used or that may contain senstive information 
+	-Ex. www.apple.com / mail.apple.com / 
+	- dnsdumpster.com 
+		- utilizes data from google-indexed subdomains and checks bing or virus total 
+		- shows subdomains when going to apple.com 
+	- sublist3r
+		- kali tool for extending dns enumeration 
+		- shows list of subdomains in the terminal 
+		- easily blocked by google (google does not like automation tools) 
+

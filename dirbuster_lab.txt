@@ -1,0 +1,50 @@
+Methodology 
+
+4.1 & 4.2
+
+- find all the machines in the network 
+- review the tap0 to see what network this machine is in
+
+	- 10.104.11.50 (10.104.11.0/24) 255.255.255.0 
+	- broadcast: 10.104.11.255
+
+	10.104.11.96
+	port/protocol - service/os  - confidence 
+	22/tcp - ssh - openssh 6.0p1 Debian (protocol 2.0) - Linux 3.2
+	80/tcp - http - Apache httpd 2.2.22 (Debian) 
+
+	10.104.11.198 - X 
+	22/tcp - ssh - openssh 6.0p1 Debian (Protocol 2.0) 
+	3306/tcp - mysql - MySQL 5.5.38 
+
+4.3
+
+- dirbuster findings 
+	
+	-/staff/readme.txt 
+	-/config.old
+	-/config.php
+	-/menu.php
+
+4.5 
+- credentials found 
+	
+	dbhostname: 127.0.0.1 
+	dbuser: aws 
+	dbpassword: UcuicjsQgG0FILdjdL8Dclear
+
+
+	-credentials did not work 
+		-dmbs was in 10.104.11.198 has the database 
+	-/signup.php 
+		- had updated credentials 
+
+		ex. mysql -u awd -p23rkckLdkfjsldfj -h 10.104.11.198
+
+		- show databases;
+		- use <databases>
+
+		- show tables;
+		- select * from <tablename>;
+
+
