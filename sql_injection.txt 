@@ -168,6 +168,21 @@ sql statements
 
 				- test with ' OR 'a'=`a / ' OR '1'=`1
 
+		- test with another "false" 
+
+			- ' OR '1'=`11 
+
+			- no image and no view counter -> exploitable 
+
+
+	- EXPLOITING A BOOLEAN BASED SQLI 
+
+		- find a way to tell when condition = true or false -> can ask questions like first letter 'a'? or three tables? 
+
+		- Blind SQL injections to find current database user 
+
+			- MySQL functions: user() & substring()
+
 	
 
 
