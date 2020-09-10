@@ -282,6 +282,41 @@ sql statements
 						- every description field will be cleared -> PERMANENT DAMAGE TO THE DATABASE 
 
 
+				- when injecting SQL query you should have an idea of what it does OR the outcome fo the application functionality of where you found SQL injection 
+
+				"Does it just display something? Or is it modifying some data?"
+
+SQLMAP
+
+	- open sopruce pen test tool that automates the process of detecting and explointing SQL injection flows and taking over the database servers 
+
+	- detect and exploit SQl injections 
+
+	- test by hand -> auto tools can choose an ineffecient exploitation strategy OR even crash a service 
+
+
+	- SYNTAX 
+
+		- $ sqlmap -u <URL> -p <injection parameter> [options]
+
+			- SQLMAP needs to know vulnerable URL and the parameter to test for a SQLi. 
+
+			- to exploit the SQLi in the previous ex. the syntax is 
+
+				- $ sqlmap -u 'http://victim.site/view.php?id=1141' -p id --technique=U 
+
+				- tells sqlmap to test the 'id' parameter of the GET request for view.php. -> tells SQLMAP to use a UNION based SQL injection technique 
+
+	- To exploit a POST parameter 
+
+		- SYNTAX 
+			 
+
+			 $ sqlmap -u <URL> --data=<POST string> -p parameter [options]
+
+			 - can copy the POST string from a request intercepted with a Burp Proxy 
+
+
 	
 
 
