@@ -262,6 +262,25 @@ sql statements
 
 			- 4. now exploit the injection by the use of user() 
 
+				EX: 
+					....id=' UNION SELECT user(), 'elsid2'; -- - 
+
+					// in page results: Views: selfie4you@localhost
+
+
+			- EXTRA 
+
+				- not only SELECT type queries are vulnerable 
+
+				- Ex. DELETE description FROM items WHERE id=[User Supplied Value]; 
+
+				AND 
+
+				- DELETE description FROM items WHERE id='1' or '1' = '1'; 
+
+					- RESULT: 
+						- every description field will be cleared -> PERMANENT DAMAGE TO THE DATABASE 
+
 
 	
 
