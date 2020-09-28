@@ -1,0 +1,39 @@
+BUFFERFLOW ATTACKS 
+
+	- taking control of execution flow of a piece of software or a routine of the operating system 
+
+	- force it to behave differently 
+
+	- leads to app crash / priv esc / remote code execution / security features bypass 
+
+	- buffer 
+
+		- area in RAM reserved for temporary data storage 
+
+			- user input 
+			- parts of video file 
+			- server banners received by a client application
+
+		- have finite size = certain amount of data 
+
+		- dev does not enforce buffer limit attacker can add additional code 
+
+		- buffers stored in a stack 
+
+			- stack is a data structure used to store data 
+
+		- applies the LAST IN FIRST OUT (LIFO) and uses two methods 
+
+			- PUSH() = adds an element to the stack 
+			- POP() = removes the last inserted element 
+
+		- modern OS the stack is flexble and pointer can refer to anywhere in the stack 
+
+		- attacker find ways to copy a four element array into A it will overflow the A array 
+
+
+	HOW BUFFER ATTACK WORKS 
+
+		- if able to overwrite return address -> control the execution flow of the program 
+
+		- metasploits

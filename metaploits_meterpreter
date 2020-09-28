@@ -1,0 +1,88 @@
+Metasploit 
+
+
+
+	+ Configure a payload
+		- An OS Shell 
+		- A VNC or RDP connection
+		- A Meterpreter Shell 
+		- The execution of an attacker-supplied application
+
+	+ Show payloads by: 
+		- show payloads
+
+	+ Meterpreter = a special payload with many useful features under the pentesting point of view 
+
+	
+
+METERPRETER
+
+
+	- Can both wait for a connection on the target machine or connect back to the attacker machine
+
+	- Most used: 
+
+		+ bind_tcp = runs on a server process on the target machine that waits for connections from the attacker machine 
+
+		+ reverse_tcp = performs a TCP connection back to the attacker machine. Can help evade firewall rules 
+
+	+ Choosing between the linux and windwos meterpreter 
+
+
+
+MANAGING METERPRETER SESSIONS 
+
+
+	+ Can instance multiple shells on your targets and switch between them 
+
+	+ meterpreter > background = switch from meterpreter session to the console 
+	+ sessions -l = list currenlty opened sessions 
+
+	+ sessions -i = resume a background session 
+
+
+METERPRETER INFO GATHERING 
+
+	+ sysinfo = retreive information about the exploited machine: name, OS, architecture, system language and meterpreter version
+
+	+ ifconfig = prints the network configuration 
+
+	+ getuid = which user is running the process 
+
+
+
+PRIVILEGE ESCALATION
+
+
+	+ getsystem = runs privileges escalation routing on the target machine 
+
+
+
+BYPASSING UAC 
+
+	+ Modern day OS's the "User Account Control" policy prevents priv esc
+
+	+ Bypass the restrictions by using the bypassuac module 
+
+		+ exploit/windows/local/bypassuac 
+
+		+ takes one argument the meterpreter session where you want to bypass UAC 
+
+	+ new meterpreter session will have UAC disabled 
+
+
+
+DUMPING PASSWORD DATABASE 
+
+	+ use post/windows/gather/hashdump 
+
+	+ set the session you are currently in 
+
+
+
+
+DOWNLOADING VS UPLOADING COMMANDS 
+
+	+ > download haxlogs.log /path/to/save/file
+	+ > upload /location/of/file/death.exe C:\\Windows
+		+ > upload location/of/file/death.exe C:\\Windows\death.exe

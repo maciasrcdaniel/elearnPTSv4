@@ -1,0 +1,179 @@
+ENUMERATING WINDOWS SHARES 
+
+	- nbtstat command 
+	
+		- Most common command to use when enumerating Windows Shares 
+
+		- Can display information about a target 
+
+		- nbstat /? = check how to use
+
+		- Most common use of nbstat is: 
+
+			- nbstat -A <IP> 
+
+				- Displays the following information
+					- Local Area Connection: 
+					- Node Padres:[10.0.2.15] Scope Id: []
+
+					- NetBIOS Remote Machine Name Table 
+
+					- Name	Type Status 
+
+					- ELS- WINXIP <00> Unique Registered 
+
+				- Name = the machine running at <ip> 
+
+				- Record Type = <00> tells use that it is a workstation
+
+				- "UNIQUE" = tells use that this computer must have only 1 IPaddress assigned 
+
+				- Line under contains the "WORKGROUP" text that tells us the domain the computer is joined to 
+
+				- <20> = tells us that the file sharing service is up and running on the machine 
+
+
+
+
+
+
+
+	- NET VIEW command
+
+		- Once attacker knows that a machine has a FILE SERVER service running they can enumerate the shares 
+
+		- SYNTAX: 
+			> NET VIEW <target IP> 
+
+		- Can see what shares are being shared 
+
+
+
+	- Nmblookup command 
+
+		- Shares enumeration from a linux machine
+		
+		- Will require the Samba Suite 
+
+		- Already installed on Kali linux 
+
+		- SYNTAX 
+
+			- # nmblookup -A <target IP address> 
+
+
+	- Smbclient command 
+
+		- FTP-like client to access Windows Shares 
+
+		- SYNTAX 
+
+			- $ smbclient -L //10.130.40.80 -N 
+
+		- -L = allows you to look at what services are available on a target 
+
+		- With //<IP Address> you have to prepend two slashes to the target IP address 
+
+		- -N = forces teh tool to not ask for a password 
+
+		- Also displays administrative shares that are hidden when using Windows standard tools 
+
+
+
+CHECKING FOR NULL SESSIONS 
+
+
+	-  Time to check if a null session attack is possible 
+
+	- To verify we will exploit the "IPC$" administrative share by trying to connect to it without valid credentials 
+
+
+
+
+CHECKING FOR NULL SESSIONS WITH WINDOWS 
+
+	- To connect: 
+
+		> NET USE \\<target IP address>\IPC$ '' /u:''
+
+		- Tells Windows to connect to the IPC$ share by using an empty password and an empty username! 
+
+	- Ex. > net use \\10.130.40.80\IPC$ '' /u:''
+
+		- Access Granted 
+
+	- ONLY WORKS WITH \IPC$
+
+
+
+
+
+CHECKING FOR NULL SESSIONS WITH LINUX 
+
+
+	- Syntax 
+
+		# smbclient //10.130.40.80/IPC$ -N 
+
+		# smbclient //10.130.40.80/C$ -N 
+
+	
+
+
+EXPLOITING NULL SESSIONS 
+
+
+	- Can be done by using the Windows NET command, tools to automate 
+
+
+	- Enum command
+
+		- retrieve information from a system vulnerable to null session attacks 
+
+		- Install by just extracting it and running it from the Windows command prompt 
+
+		- SYNTAX 
+
+			> enum -S 10.130.40.80
+
+			- -S = lets you enumerate the shares of a machine 
+
+			- enumerates administrative shares as well 
+
+			- -U = enumerates users 
+		
+			- > enum -U 10.130.40.80
+
+			- -P = can check the password policy 
+
+		- Checking password policies before running an authentication attack lets you find-tune an attack tool: 
+
+			- prevent accounts locking 
+			- prevent false positives 
+			- choose your dictionary or your bruteforcer configuration 
+
+
+
+
+EXPLOITING NULLS SESSIONS WITH WINFO 
+
+
+
+		- Automate null session exploitation
+
+		SYNTAX 
+
+			> winfo 10.130.40.80 -n 
+
+		- -n = tell the tool to use null sessions 
+
+
+
+EXPLOITING NULL SESSIONS WITH enum4linux 
+
+
+	- A PERL script that can perform the same operations of enum and Winfo
+
+	- By default it performs: 
+
+		- User enumeration / share enumeration / group and member enumeration / password policy extraction / os information detection / a nmblookup run / printer information extraction 	 

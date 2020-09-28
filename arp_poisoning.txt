@@ -1,0 +1,85 @@
+ARP Poisoning 
+
+
+	ARP Poisoning = powerful attack you can use to INTERCEPT traffic on a switched network 
+
+
+	- Sending a packet a host needs to know a mac address of the next hop 
+
+	- If attacker manipulates the ARP tables of two parties involved in a communication and will be able to sniff the whole communication -> MAN IN THE MIDDLE attack. 
+
+
+ARP POISONING ACTORS 
+
+
+	1. Two network nodes (clients, servers, routers, printers,..) 
+
+	2. The attacker 
+
+		
+		+ Attacker can manipulate other hosts ARP cache tables by sending "gratuitous ARP replies" 
+
+	+ Gratuitous ARP Replies = unsolicited ARP reply messages -> the attacker sends a reply without waiting for a host to perform a request 
+
+	+ Attack exploits gratuitous ARP messages to tell the victims that they can reach a specific IP address at the attackers MAC address 
+
+		- Tells machine A that they can find machine B at the attacker MAC address instead of B 
+
+	+ Operation is performed on every victim 
+
+	+ Attacker can prevent the poisoned entry from expiring by sending gratuitous ARP replies every 30 seconds or so
+
+
+	+ Attackers machine receives packets, it must "forward them to the correct distination". Otherwise, the communication between the victim hosts will not work 
+
+
+	+ Operation lets the hacker sniff traffic between the poisoned hosts even if the machines sit on a switched network 
+
+	+ Attacker can also "change the content of the packets" thus manipulating the infomration exchanged by the two parties 
+
+
+
+LOCAL TO REMOTE MITM 
+
+
+	+ Attack can be used on ENTIRE NETWORK AND AGAINST A ROUTER, letting an attacker intercept the communication between a LAN and the Internet
+	
+
+
+
+DSNIFF ARPSPOOF 
+
+	
+	+ Dsniff = a collection of tools for network auditing and penetration testing.
+
+		+ It includes "arpspoof" = a utility designed to intercept traffic on a switched LAN 
+		+ Redirects packets from a target host (or all hosts) on the LAN intended for another host on the LAN by forging ARP replies"                               
+
+
+	** + before running the tool, you have to enable the LINUX KERNEL IP FORWARDING, a feature that transforms a linux box into a router 
+
+
+	+ By enabling IP forwarding, you tell your machine to forward the packets you intercept to the real destination host 
+
+		# echo 1 > /proc/sys/net/ipv4/ip_forward 
+
+	Then run: 
+
+		# arpspoof -i <interface> -t <target> -r <host> 
+
+			+ INTERFACE = is the NIC you want to use, for example, "eth0" for you local LAN or "tap0" when you are connected to Hera Lab 
+
+			+ Target and Host are the victims IP addresses 
+
+
+	EXAMPLE: 
+
+		+ To intercept traffic between 192.168.4.11 and 192.168.4.16
+		
+			# echo 1 > /proc/sys/net/ipv4/ip_forward
+			# arpspoof -i eth0 -t 192.168.4.11 -r 192.168.4.16
+
+			-> Run WIRESHARK and intercept traffic 
+
+
+

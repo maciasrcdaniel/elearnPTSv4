@@ -1,0 +1,13 @@
+Target = 10.124.211.96
+
+Objective
+
+	- find all the vulnerable injection points 
+
+	- dump the data and login 
+
+	- loging with using any credential 
+
+Findinds
+
+	

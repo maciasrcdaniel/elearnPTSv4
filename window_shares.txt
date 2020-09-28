@@ -1,0 +1,85 @@
+Window Shares 
+
+NETBIOS
+
+	- Network Basic Input Output System
+
+	- Servers and clients use NetBIOS when viewing network shares on the local area network 
+
+	- NetBIOS can supply some of the following information when querying a computer 
+		- Hostname
+		- NetBIOS Name 
+		- Domain
+		- Network Shares 
+
+	- NetBIOS API sits betwenn the application layer and the IP layer
+
+	- UDP is used to perform NetBIOS "name resolution" and to carry other "one-to-many" datagram-based communications 
+
+	-Heavy traffic, such as file copy, relies on TCP by using NetBIOS "sessions" 
+
+	- Different features use different ports and transport protocols 
+
+	- When MS Windows machine browses a network it uses NetBIOS: 
+		- DATAGRAMS = to list the shares and the machines 
+		- NAMES = to find the workgroups 
+		- SESSIONS = to transmit data to and from a "Windows Share" 
+
+SHARES 
+
+	- Windows machine can share a file or a directory on the network; lets local and remote users access teh resouce and, possibly modify it 
+
+		- Ex. File server in an office let users opne and edit documents of their own department, while it lets everyone read but not modify public information files 
+
+	- Turn on File and Printer Sharing service and then they can start choosing directories or files to share 
+
+	- Users can also set permissions on a share (reading/writing/modifying) 
+
+	- Can share a file or a public directory 
+
+UNC PATHS 
+
+	- Authorized user can access shares by using "Universal Naming Convention Paths (UNC PATHS)" 
+
+	- SYNTAX 
+		\\ServerName\ShareName\file.nat
+
+
+ADMINISTRATIVE SHARES 
+
+	- Administrative shares 
+
+		- \\ComputerName\C$ = lets an administrator access a volume on the local machine. Every volume has a share (C$, D$, E$, etc.) 
+
+		- \\ComputerName\admin$ = points to the windows installation directory 
+
+		- \\ComputerName\ipc$ = is used for inter-process communication. You cannot browse it via Windows Explorer 
+
+	- Example: \\localhost\<sharename> 
+
+
+BADLY CONFIGURED SHARES 
+
+	- Accesing a share means having access to the resources of the computer hosting it. Can be exploiting by: 
+
+		- Information Disclosure 
+		- Unauthorized File Access 
+		- Information Leakage used to mount a targeted attack
+
+
+NULL SESSIONS 
+
+	- Null session attacks = can be used to enumerate alof of information about: 
+		- Passwords
+		- System Usersf
+		- System Groups 
+		- Running System Processes 
+
+	- Null sessions are remotely exploitable 
+		- Attack can be used to call remote API's and remote procedure calls 
+		- Legacy hosts are still vulnerable 
+
+	- NS attack exploits an authentication vulnerability for Windows Administrative Shares -> attacker connects to local or remote share without authentication 
+
+
+ 

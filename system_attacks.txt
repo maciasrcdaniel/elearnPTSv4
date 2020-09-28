@@ -1,0 +1,39 @@
+MALWARE 
+
+	- virus
+	- trojan horse
+	- rootkit
+	- bootkit
+		- rootkits that circumvent OS protection by executing during the bootstrap phase 
+		- start before the OS 
+	- backdoors
+		
+		- made by two components: server and backdoor client 
+		- backdoor server runs on the victim machines listening on the network and accepting connections / client runs on attacker machine 
+		- old school backdoors: NetBus & SubSeven
+		- firewall blocks connection to internet from machines -> use Connect-back BackDoor(reverse backdoor)
+		- instead of having the victim machine act as a server and listening to the client(attackers) command, it acts as a client and connects back to the pentesters machines / would listen on a well known port like 80
+		- firewall cannot tell the difference between a user surfing the web and a backdoor connecting back to the attacker 
+
+	- adware
+	- spyware
+	- greyware
+		- false between adware and spyware 
+	- dialer
+		- software that tries to dial numbers on dial-up connections
+	- key-loggers
+		- same restrictions as backdoor when it comes to bypassing firewall
+		- hardware keyloggers = small devices that can be installed on keyboards or computers 
+			- log key strokes internal internal memory
+			- two trips to victim machine -> install it and one to retrieve it 
+		- rootkit keyloggers = stealthy and more visibile to the victim user than software keyloggers 
+			- work at kernel level by hijacking the operating system APIs to record strokes 
+			- key is pressed on a keyboard a particular function of the OS Kernel is called through a mechanism called an INTERRUPT
+			- different key = the keyboard interrupt is called 
+			- take control of this function -> rootkit knows which key has been pressed 
+
+	- botnet 
+	- ransomware 
+	- data-stealing malware 
+	- worm 
+
